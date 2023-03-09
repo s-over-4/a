@@ -1,19 +1,43 @@
-const WS = require('ws')   // the websocket module
+const webSocket = require('ws');  // the websocket module
+const wss = new webSocket.Server({port: 8081});  // the web socket server™  
 
-const wss = new WS.Server({port: 8081})   // the web socket server™  
+class Packet {
+   constructor(ws, type, data) {
+      this.ws = ws;
+      this.type = type;
+      this.time = 0;
+      this.data = data;
 
-wss.on('connection', function connection(s) {
+      this.packet = {
+         "type": this.type,
+         "time": this.time,
+         "data": this.data
+      }
+   }
+
+   
+
+   send() {
+      this.ws.send(JSON.stringify(this.packet));
+   }
+}
+
+
+wss.on('connection', function connection(ws) {
    console.log('there was a connection.')
 
-   const interval = setInterval(() => {
-      s.send('Hello, world.')    // send hello world to client every second once connection is established 
-   }, 1000)
+   let hello = new Packet(ws, "hello", null);
+   hello.send();
 
-   s.on('close', () => {
+   // const interval = setInterval(() => {
+   //    ws.send('Hello, world.')    // send hello world to client every second once connection is established 
+   // }, 1000)
+
+   ws.on('close', () => {
       console.log('there was a disconnection.')
    })
 
-   s.onerror = function () {
+   ws.onerror = function () {
       console.log('there was an error.')
    }
 })
