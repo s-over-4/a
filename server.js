@@ -5,7 +5,7 @@ class Packet {
    constructor(ws, type, data) {
       this.ws = ws;
       this.type = type;
-      this.time = 0;
+      this.time = new Date().getTime();
       this.data = data;
 
       this.packet = {
